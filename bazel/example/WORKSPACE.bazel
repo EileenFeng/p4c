@@ -1,8 +1,11 @@
-workspace(name = "com_github_p4lang_p4c")
+workspace(name = "example_p4_project")
 
-# -- Direct dependencies. ------------------------------------------------------
+local_repository(
+  name = "com_github_p4lang_p4c",
+  path = "../..",
+)
 
-load("//:bazel/p4c_deps.bzl", "p4c_deps")
+load("@com_github_p4lang_p4c//:bazel/p4c_deps.bzl", "p4c_deps")
 
 p4c_deps()
 

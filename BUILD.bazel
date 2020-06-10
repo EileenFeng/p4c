@@ -1,9 +1,14 @@
-load("@//:bazel/lex.bzl", "genlex")
-load("@//:bazel/bison.bzl", "genyacc")
+load("//:bazel/flex.bzl", "genlex")
+load("//:bazel/bison.bzl", "genyacc")
 
 package(
     default_visibility = ["//visibility:public"],
-    license = "notice",  # Apache v2
+    licenses = ["notice"],  # Apache v2
+)
+
+filegroup(
+    name = "p4include",
+    srcs = glob(["p4include/*.p4"]),
 )
 
 P4C_BUILD_DEFAULT_COPTS = [

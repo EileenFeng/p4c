@@ -1,11 +1,8 @@
-# Definition of genlex and genyacc.
+"""Build rule for generating C or C++ sources with Flex."""
 
-"""Build rule for generating C or C++ sources with Flex.
-"""
-
-# Expects to find flex in the path
-def genlex(name, src, out, prefix, includes = [], visibility = []):
-    """One-line summary: Generate a C++ lexer from a lex file using Flex.
+# Expects to find flex in the path.
+def genlex(name, src, out, prefix, includes = [], visibility = None):
+    """Generate a C++ lexer from a lex file using Flex.
 
     Args:
       name: The name of the rule.
