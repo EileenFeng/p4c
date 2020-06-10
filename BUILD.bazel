@@ -1,13 +1,15 @@
-licenses(["notice"])  # Apache v2
-
-load("@//:bazel/lex.bzl", "genlex")
-load("@//:bazel/bison.bzl", "genyacc")
+load("//:bazel/flex.bzl", "genlex")
+load("//:bazel/bison.bzl", "genyacc")
 
 package(
     default_visibility = ["//visibility:public"],
+    licenses = ["notice"],  # Apache v2
 )
 
-PACKAGE_NAME = "com_github_p4lang_p4c"
+filegroup(
+    name = "p4include",
+    srcs = glob(["p4include/*.p4"]),
+)
 
 P4C_BUILD_DEFAULT_COPTS = [
     "-DCONFIG_PKGDATADIR=\\\"external/p4lang_p4c\\\"",
@@ -105,8 +107,7 @@ cc_library(
     visibility = ["//visibility:private"],
 )
 
-# The ir-generator tool uses a parser built by these genlex and
-# genyacc rules.
+# The ir-generator tool uses a parser built by these genlex and genyacc rules.
 genlex(
     name = "ir_generator_lex",
     src = "tools/ir-generator/ir-generator-lex.l",
@@ -125,7 +126,7 @@ genyacc(
 )
 
 # This cc_library contains the ir-generator tool sources, including the
-# ir-generator parser source from the lex/yacc output.  The srcs attribute
+# ir-generator parser source from the lex/yacc output. The srcs attribute
 # excludes generator.cpp since it is part of the cc_binary.
 cc_library(
     name = "p4c_ir_generator_lib",
@@ -279,7 +280,7 @@ cc_library(
     deps = [
         ":config_h",
         "@boost//:format",
-        "@p4c_gtest//:p4c_gtest_includes",
+        "@com_google_googletest//:gtest",
     ],
 )
 
@@ -294,16 +295,12 @@ cc_library(
         ":p4c_frontend_h",
         ":p4c_ir",
         ":p4c_toolkit",
-        "@p4lang_p4runtime//:p4info_cc_proto",
-        "@p4lang_p4runtime//:p4runtime_cc_grpc_proto",
-        "@p4lang_p4runtime//:p4types_cc_proto",
+        "@com_github_p4lang_p4runtime//:p4info_cc_proto",
+        "@com_github_p4lang_p4runtime//:p4runtime_cc_grpc",
+        "@com_github_p4lang_p4runtime//:p4types_cc_proto",
     ],
 )
 
-# These rules build p4c binaries with the bmv2 soft switch and PSA backends.
-# These binaries are for example purposes.  Backends for Stratum production will
-# be implemented elsewhere and build with dependencies on the libraries above.
-# TODO(): Add rules for the PSA variation.
 cc_library(
     name = "p4c_bmv2_common_lib",
     srcs = glob(
