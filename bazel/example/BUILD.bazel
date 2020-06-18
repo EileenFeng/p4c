@@ -3,6 +3,7 @@ load("@com_github_p4lang_p4c//:bazel/p4_library.bzl", "p4_library")
 filegroup(
   name = "ir_extensions",
   srcs = glob(["*.def"]),
+  visibility = ["//visibility:public"],  # So p4c can compile these.
 )
 
 p4_library(
@@ -29,5 +30,9 @@ cc_binary(
     "@com_github_p4lang_p4c//:p4c_ir",
     "@com_github_p4lang_p4runtime//:p4info_cc_proto",
     "@com_google_protobuf//:protobuf",
+  ],
+  linkopts = [
+    "-lgmp",
+    "-lgmpxx",
   ],
 )

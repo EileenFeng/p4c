@@ -1,6 +1,5 @@
 load("//:bazel/flex.bzl", "genlex")
 load("//:bazel/bison.bzl", "genyacc")
-load("//:bazel/p4c_extensions.bzl", "ir_extensions")
 
 package(
     default_visibility = ["//visibility:public"],
@@ -155,14 +154,20 @@ cc_binary(
     ],
 )
 
-genrule(
-    name = "ir_generated_files",
+filegroup(
+    name = "ir_extra_defs",
     srcs = [
         "frontends/p4-14/ir-v1.def",
         "backends/bmv2/bmv2.def",
-    ] + glob([
-        "ir/*.def",
-    ]) + ir_extensions(),
+        # p4c extensions may set this target to a `filegroup` containing
+        # additional .def files.
+        "@com_github_p4lang_p4c_extension//:ir_extensions",
+    ],
+)
+
+genrule(
+    name = "ir_generated_files",
+    srcs = glob(["ir/*.def"]) + [":ir_extra_defs"],
     outs = [
         "ir/gen-tree-macro.h",
         "ir/ir-generated.cpp",
@@ -178,14 +183,8 @@ genrule(
             $(location ir/expression.def) \
             $(location ir/ir.def) \
             $(location ir/v1.def) \
-            $(location frontends/p4-14/ir-v1.def) \
-            $(location backends/bmv2/bmv2.def) \
-            {extensions}
-    """.format(
-        # This allows p4c extensions to inject custom IR definitions. Consult
-        # the declaration of `ir_extensions` to see how to do this.
-        extensions = " ".join(["$(locations %s)" % l for l in ir_extensions()])
-    ),
+            $(locations :ir_extra_defs)
+    """,
     tools = [":irgenerator"],
 )
 
