@@ -162,7 +162,7 @@ genrule(
         "backends/bmv2/bmv2.def",
     ] + glob([
         "ir/*.def",
-    ]),
+    ]) + ir_extensions(),
     outs = [
         "ir/gen-tree-macro.h",
         "ir/ir-generated.cpp",
