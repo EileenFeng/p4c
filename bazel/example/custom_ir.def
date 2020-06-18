@@ -1,0 +1,8 @@
+// Taken from github.com/stratum/stratum.
+
+class TableHitStatement : Statement {
+  inline cstring hit_var_name;
+  inline cstring table_name;
+  P4Table p4_table;
+#nodbprint
+}

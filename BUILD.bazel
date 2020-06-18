@@ -1,5 +1,6 @@
 load("//:bazel/flex.bzl", "genlex")
 load("//:bazel/bison.bzl", "genyacc")
+load("//:bazel/p4c_extensions.bzl", "ir_extensions")
 
 package(
     default_visibility = ["//visibility:public"],
@@ -178,8 +179,13 @@ genrule(
             $(location ir/ir.def) \
             $(location ir/v1.def) \
             $(location frontends/p4-14/ir-v1.def) \
-            $(locations backends/bmv2/bmv2.def)
-    """,
+            $(location backends/bmv2/bmv2.def) \
+            {extensions}
+    """.format(
+        # This allows p4c extensions to inject custom IR definitions. Consult
+        # the declaration of `ir_extensions` to see how to do this.
+        extensions = " ".join(["$(locations %s)" % l for l in ir_extensions()])
+    ),
     tools = [":irgenerator"],
 )
 
